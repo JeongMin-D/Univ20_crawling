@@ -1,0 +1,70 @@
+from selenium import webdriver
+from selenium.webdriver.common.keys import Keys
+import csv
+import time
+
+# [create csv file, open]
+f = open('jj.csv', 'w', encoding='utf-8_sig',  newline='')
+csv_writer = csv.writer(f)
+
+# [Chrome driver set]
+path="C:\\Users\\BowlMin\\PycharmProjects\\driver\\chromedriver"
+driver = webdriver.Chrome(path)
+
+
+# [brower_on]
+driver.get("https://univ20.com/tag/%EC%97%90%EC%84%B8%EC%9D%B4")
+
+time.sleep(0.5)
+
+# [contents save]
+for i in range (1, 14):
+    for z in range(1,13):
+        body = driver.find_element_by_tag_name('html')
+        if i == 1:
+            num = 10
+        elif i <= 5:
+            num = 50
+        else:
+            num = 115
+        while num:
+            body.send_keys(Keys.PAGE_DOWN)
+            time.sleep(0.2)
+            num -= 1
+        a = '//*[@id="ajax-load-more"]/div[1]/div['+str(i)+']/div['+str(z)+']/div/div[1]/div/h1'
+        time.sleep(1.0)
+        driver.find_element_by_xpath(a).click()
+        try:
+            time.sleep(1.0)
+
+            writer = driver.find_element_by_xpath("/html/body/div[7]/div/div/div/h1")
+            contests = driver.find_element_by_xpath("/html/body/div[6]/div/div[1]")
+            title = driver.find_element_by_xpath("/html/body/div[5]/div[1]/div/h1")
+            sub = driver.find_element_by_xpath('/html/body/div[5]/div[1]/div/h2')
+            date = driver.find_element_by_xpath("/html/body/div[5]/div[1]/div/h3")
+
+            writer_text = writer.text
+            writer_text = writer_text.split()
+            writer_text = writer_text[0]
+
+            text_text = contests.text
+            title_text = title.text
+            sub_text = sub.text
+            date_text = date.text
+
+            csv_writer.writerow([writer_text, title_text, sub_text, date_text, text_text])
+
+            driver.back()
+
+        except:
+            driver.back()
+
+
+    body = driver.find_element_by_tag_name('html')
+    num = 110
+    while num:
+        body.send_keys(Keys.PAGE_DOWN)
+        time.sleep(0.2)
+        num -=1
+
+f.close()
